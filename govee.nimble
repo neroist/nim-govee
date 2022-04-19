@@ -2,7 +2,7 @@
 
 version       = "1.0.0"
 author        = "t-h-rk-turner"
-description   = "Govee API Nim wrapper"
+description   = "A Nim wrapper for the Govee API."
 license       = "MIT"
 srcDir        = "src"
 
