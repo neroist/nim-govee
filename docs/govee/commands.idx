@@ -1,0 +1,10 @@
+getColor	govee/commands.html#getColor,Govee,GoveeDevice	commands: getColor(govee: Govee; device: GoveeDevice): Color	
+setColor	govee/commands.html#setColor,Govee,GoveeDevice,Color	commands: setColor(govee: Govee; device: GoveeDevice; color: Color)	
+getBrightness	govee/commands.html#getBrightness,Govee,GoveeDevice	commands: getBrightness(govee: Govee; device: GoveeDevice): float	
+setBrightness	govee/commands.html#setBrightness,Govee,GoveeDevice,float	commands: setBrightness(govee: Govee; device: GoveeDevice; brightness: float)	
+getPowerState	govee/commands.html#getPowerState,Govee,GoveeDevice	commands: getPowerState(govee: Govee; device: GoveeDevice): bool	
+setPowerState	govee/commands.html#setPowerState,Govee,GoveeDevice,bool	commands: setPowerState(govee: Govee; device: GoveeDevice; state: bool)	
+turn	govee/commands.html#turn,Govee,GoveeDevice,bool	commands: turn(govee: Govee; device: GoveeDevice; state: bool)	
+getColorTemp	govee/commands.html#getColorTemp,Govee,GoveeDevice	commands: getColorTemp(govee: Govee; device: GoveeDevice): int	
+setColorTemp	govee/commands.html#setColorTemp,Govee,GoveeDevice,int	commands: setColorTemp(govee: Govee; device: GoveeDevice; temp: int)	
+isOnline	govee/commands.html#isOnline,Govee,GoveeDevice	commands: isOnline(govee: Govee; device: GoveeDevice): bool	

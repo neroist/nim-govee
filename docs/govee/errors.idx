@@ -1,0 +1,6 @@
+GoveeError	govee/errors.html#GoveeError	errors: GoveeError	
+GoveeCommandNotSupportedError	govee/errors.html#GoveeCommandNotSupportedError	errors: GoveeCommandNotSupportedError	
+GoveeAuthorizationError	govee/errors.html#GoveeAuthorizationError	errors: GoveeAuthorizationError	
+GoveeRateLimitedError	govee/errors.html#GoveeRateLimitedError	errors: GoveeRateLimitedError	
+GoveeInternalError	govee/errors.html#GoveeInternalError	errors: GoveeInternalError	
+raiseErrors	govee/errors.html#raiseErrors.t,Response	errors: raiseErrors(resp: Response)	

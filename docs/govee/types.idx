@@ -1,0 +1,12 @@
+GoveeDevice	govee/types.html#GoveeDevice	types: GoveeDevice	
+Govee	govee/types.html#Govee	types: Govee	
+`==`	govee/types.html#==,GoveeDevice,GoveeDevice	types: `==`(device1, device2: GoveeDevice): bool	
+`$`	govee/types.html#$,GoveeDevice	types: `$`(device: GoveeDevice): string	
+`==`	govee/types.html#==,Govee,Govee	types: `==`(acc1, acc2: Govee): bool	
+`[]`	govee/types.html#[],Govee,int	types: `[]`(acc: Govee; idx: int): GoveeDevice	
+initGovee	govee/types.html#initGovee,string	types: initGovee(apiKey: string): Govee	
+update	govee/types.html#update,Govee	types: update(govee: var Govee)	
+contains	govee/types.html#contains,Govee,GoveeDevice	types: contains(govee: Govee; device: GoveeDevice): bool	
+items	govee/types.html#items.i,Govee	types: items(govee: Govee): GoveeDevice	
+pairs	govee/types.html#pairs.i,Govee	types: pairs(govee: Govee): tuple[a: int, b: GoveeDevice]	
+getDevice	govee/types.html#getDevice,Govee,int	types: getDevice(govee: Govee; idx: int): GoveeDevice	
