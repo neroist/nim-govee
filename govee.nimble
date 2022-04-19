@@ -9,4 +9,4 @@ srcDir        = "src"
 
 # Dependencies
 
-requires "nim >= 0.8.0" # This library may work with all Nim versions
+requires "nim >= 1.0.0" # This library might work with all Nim versions
