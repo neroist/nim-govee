@@ -1,4 +1,4 @@
-# This does not actually compile.
+# This does not actually compile (for nimdoc).
 
 ## Govee API wrapper
 ## 
