@@ -11,18 +11,18 @@ import std/[
   uri
 ]
 
-var
-  client = newHttpClient()
-
 # --- helpers---
-func contructUri(base: Uri = StateUri; device: GoveeDevice): Uri {.inline.} =
+{.push inline.}
+
+func contructUri(base: Uri = StateUri; device: GoveeDevice): Uri =
   base ? {"device": device.address, "model": device.model}
 
-func setClientHeaders(client: var HttpClient, govee: Govee) {.inline.} =
+func setClientHeaders(client: var HttpClient, govee: Govee) =
   client.headers = newHttpHeaders(
     {"Govee-API-Key": govee.apiKey, "Content-Type": "application/json"}
   )
-  
+
+{.pop.}
 
 # --- Color ---
 proc getColor*(govee: Govee; device: GoveeDevice): Color = 
@@ -30,6 +30,8 @@ proc getColor*(govee: Govee; device: GoveeDevice): Color =
   ## 
   ## .. warning:: This may return a blank color (#000000). This is because the API sometimes does not \
   ## provide the device's color.
+  
+  var client = newHttpClient()
   
   client.setClientHeaders(govee)
 
@@ -49,6 +51,7 @@ proc getColor*(govee: Govee; device: GoveeDevice): Color =
 proc setColor*(govee: Govee; device: GoveeDevice; color: Color) = 
   ## Set `device`'s color to `color`
 
+  var client = newHttpClient()
   client.setClientHeaders(govee)
 
   let
@@ -76,7 +79,11 @@ proc setColor*(govee: Govee; device: GoveeDevice; color: Color) =
 # --- Brightness ---
 proc getBrightness*(govee: Govee; device: GoveeDevice): float =
   ## Returns `device`'s brightness as a percentage (e.g. 56% brightness is 0.56)
+  ## 
+  ## .. warning:: This may return 0, as the device may not support retriving \
+  ## brightness
 
+  var client = newHttpClient()
   client.setClientHeaders(govee)
 
   let
@@ -85,13 +92,17 @@ proc getBrightness*(govee: Govee; device: GoveeDevice): float =
 
   raiseErrors(resp)
 
-  return jresp["data"]["properties"][2]["brightness"].getInt() / 100
+  try:
+    jresp["data"]["properties"][2]["brightness"].getInt() / 100
+  except KeyError:
+    0.0
 
 proc setBrightness*(govee: Govee; device: GoveeDevice; brightness: float) = 
   ## Sets `devices`'s brightness to `brightness`.
   ## 
   ## .. note:: `brightness` is a percentage (e.g. 73% brightness is 0.73)
-
+  
+  var client = newHttpClient()
   client.setClientHeaders(govee)
 
   let
@@ -116,6 +127,7 @@ proc setBrightness*(govee: Govee; device: GoveeDevice; brightness: float) =
 proc getPowerState*(govee: Govee; device: GoveeDevice): bool =
   ## Returns the device's power state (i.e. whether the device is on or off)
   
+  var client = newHttpClient()
   client.setClientHeaders(govee)
 
   let
@@ -129,6 +141,7 @@ proc getPowerState*(govee: Govee; device: GoveeDevice): bool =
 proc setPowerState*(govee: Govee; device: GoveeDevice; state: bool) =
   ## Set `device`'s power state (i.e. whether the device is on or off) to `state`
 
+  var client = newHttpClient()
   client.setClientHeaders govee
 
   let
@@ -156,6 +169,7 @@ proc getColorTemp*(govee: Govee; device: GoveeDevice): int =
   ## .. warning:: This may return 0K. This is because the API sometimes does not \
   ## provide the device's color temperature.
   
+  var client = newHttpClient()
   client.setClientHeaders(govee)
 
   let
@@ -174,6 +188,7 @@ proc getColorTemp*(govee: Govee; device: GoveeDevice): int =
 proc setColorTemp*(govee: Govee; device: GoveeDevice; temp: int) = 
   ## Set `device`'s color temperature to `temp` in kelvin
 
+  var client = newHttpClient()
   client.setClientHeaders(govee)
 
   let
@@ -202,6 +217,7 @@ proc isOnline*(govee: Govee; device: GoveeDevice): bool =
   ##  commands, then even if there the cache is wrong, the users can still control
   ##  the device."
 
+  var client = newHttpClient()
   client.setClientHeaders(govee)
 
   let
@@ -211,3 +227,44 @@ proc isOnline*(govee: Govee; device: GoveeDevice): bool =
   raiseErrors(resp)
 
   return jresp["data"]["properties"][0]["online"].bval
+
+proc getInfo*(govee: Govee; device: GoveeDevice): tuple[
+  online, powerState: bool; 
+  brightness, colorTemp: int;
+  color: Color
+] = 
+  ## Get all device information as a tuple.
+  ## 
+  ## .. warning:: brightness, colorTemp, and color may be 0 or a blank color.
+  var client = newHttpClient()
+  client.setClientHeaders(govee)
+
+  let
+    resp = client.get(contructUri(device=device))
+    properties = parseJson(resp.body)["data"]["properties"]
+
+  raiseErrors(resp)
+
+  result.online = properties[0]["online"].getStr == "true"
+  result.powerState = properties[1]["powerState"].getStr == "on"
+
+  result.brightness = try: 
+    properties[2]["brightness"].getInt
+  except KeyError: 
+    0
+
+  result.colorTemp = try:
+    properties[3]["colorTemInKelvin"].getInt
+  except KeyError:
+    0
+
+  result.color = try:
+    let jcolor = properties[3]["color"]
+    rgb(jcolor["r"].getInt, jcolor["g"].getInt, jcolor["b"].getInt)
+  except KeyError:
+    parseColor("#000000")
+
+when isMainModule:
+  let me = initGovee("86f2c216-e4f1-4a89-b2ec-678f604efae5")
+  me.setBrightness(me[0], 100.0)
+

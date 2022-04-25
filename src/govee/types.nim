@@ -8,7 +8,7 @@ import std/[
 ]
 
 type
-  GoveeDevice* = ref object          ## This object represents Govee device
+  GoveeDevice* = ref object of RootObj          ## This object represents Govee device
 
     address*: string                 ## The mac address of the device
     model*: string                   ## The device model 
@@ -93,7 +93,7 @@ proc update*(govee: var Govee) =
   govee = initGovee(govee.apiKey)
 
 proc contains*(govee: Govee, device: GoveeDevice): bool {.noSideEffect.} = 
-  ## Impl for `in` and `notin` operators.
+  ## Implmentation for `in` and `notin` operators.
   ## Returns if `device` is in `govee`'s list of devices.
   device in govee.devices
 
