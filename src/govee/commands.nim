@@ -230,7 +230,8 @@ proc isOnline*(govee: Govee; device: GoveeDevice): bool =
 
 proc getInfo*(govee: Govee; device: GoveeDevice): tuple[
   online, powerState: bool; 
-  brightness, colorTemp: int;
+  brightness: float;
+  colorTemp: int;
   color: Color
 ] = 
   ## Get all device information as a tuple.
@@ -249,9 +250,9 @@ proc getInfo*(govee: Govee; device: GoveeDevice): tuple[
   result.powerState = properties[1]["powerState"].getStr == "on"
 
   result.brightness = try: 
-    properties[2]["brightness"].getInt
+    properties[2]["brightness"].getInt / 100
   except KeyError: 
-    0
+    0.0
 
   result.colorTemp = try:
     properties[3]["colorTemInKelvin"].getInt
