@@ -17,7 +17,7 @@ import std/[
 func contructUri(base: Uri = StateUri; device: GoveeDevice): Uri =
   base ? {"device": device.address, "model": device.model}
 
-func setClientHeaders(client: var HttpClient, govee: Govee) =
+func setClientHeaders(client: var HttpClient; govee: Govee) =
   client.headers = newHttpHeaders(
     {"Govee-API-Key": govee.apiKey, "Content-Type": "application/json"}
   )
@@ -25,30 +25,30 @@ func setClientHeaders(client: var HttpClient, govee: Govee) =
 {.pop.}
 
 # --- Color ---
-proc getColor*(govee: Govee; device: GoveeDevice): Color = 
+proc getColor*(govee: Govee; device: GoveeDevice): Color =
   ## Get `device`'s color
-  ## 
+  ##
   ## .. warning:: This may return a blank color (#000000). This is because the API sometimes does not \
   ## provide the device's color.
-  
+
   var client = newHttpClient()
-  
+
   client.setClientHeaders(govee)
 
   let
-    resp = client.get(contructUri(device=device))
+    resp = client.get(contructUri(device = device))
     jresp = parseJson resp.body
 
   raiseErrors(resp)
-  
-  let jcolor = try: 
+
+  let jcolor = try:
     jresp["data"]["properties"][3]["color"]
   except KeyError:
     %* {"r": 0, "g": 0, "b": 0}
 
   return rgb(jcolor["r"].getInt, jcolor["g"].getInt, jcolor["b"].getInt)
 
-proc setColor*(govee: Govee; device: GoveeDevice; color: Color) = 
+proc setColor*(govee: Govee; device: GoveeDevice; color: Color) =
   ## Set `device`'s color to `color`
 
   var client = newHttpClient()
@@ -66,8 +66,8 @@ proc setColor*(govee: Govee; device: GoveeDevice; color: Color) =
           "r": ec.r,
           "g": ec.g,
           "b": ec.b
-        }
       }
+    }
     }
 
   let
@@ -79,7 +79,7 @@ proc setColor*(govee: Govee; device: GoveeDevice; color: Color) =
 # --- Brightness ---
 proc getBrightness*(govee: Govee; device: GoveeDevice): float =
   ## Returns `device`'s brightness as a percentage (e.g. 56% brightness is 0.56)
-  ## 
+  ##
   ## .. warning:: This may return 0, as the device may not support retriving \
   ## brightness
 
@@ -87,7 +87,7 @@ proc getBrightness*(govee: Govee; device: GoveeDevice): float =
   client.setClientHeaders(govee)
 
   let
-    resp = client.get(contructUri(device=device))
+    resp = client.get(contructUri(device = device))
     jresp = parseJson resp.body
 
   raiseErrors(resp)
@@ -97,11 +97,11 @@ proc getBrightness*(govee: Govee; device: GoveeDevice): float =
   except KeyError:
     0.0
 
-proc setBrightness*(govee: Govee; device: GoveeDevice; brightness: float) = 
+proc setBrightness*(govee: Govee; device: GoveeDevice; brightness: float) =
   ## Sets `devices`'s brightness to `brightness`.
-  ## 
+  ##
   ## .. note:: `brightness` is a percentage (e.g. 73% brightness is 0.73)
-  
+
   var client = newHttpClient()
   client.setClientHeaders(govee)
 
@@ -126,12 +126,12 @@ proc setBrightness*(govee: Govee; device: GoveeDevice; brightness: float) =
 # --- Power State ---
 proc getPowerState*(govee: Govee; device: GoveeDevice): bool =
   ## Returns the device's power state (i.e. whether the device is on or off)
-  
+
   var client = newHttpClient()
   client.setClientHeaders(govee)
 
   let
-    resp = client.get(contructUri(device=device))
+    resp = client.get(contructUri(device = device))
     jresp = parseJson resp.body
 
   raiseErrors(resp)
@@ -158,22 +158,22 @@ proc setPowerState*(govee: Govee; device: GoveeDevice; state: bool) =
 
   raiseErrors(resp)
 
-proc turn*(govee: Govee; device: GoveeDevice; state: bool) = 
+proc turn*(govee: Govee; device: GoveeDevice; state: bool) =
   ## Alias for `setPowerState`
   govee.setPowerState(device, state)
-  
+
 # --- Color Temp ---
-proc getColorTemp*(govee: Govee; device: GoveeDevice): int = 
+proc getColorTemp*(govee: Govee; device: GoveeDevice): int =
   ## Returns `device`'s color temperature in kelvin
-  ## 
+  ##
   ## .. warning:: This may return 0K. This is because the API sometimes does not \
   ## provide the device's color temperature.
-  
+
   var client = newHttpClient()
   client.setClientHeaders(govee)
 
   let
-    resp = client.get(contructUri(device=device))
+    resp = client.get(contructUri(device = device))
     jresp = parseJson resp.body
 
   raiseErrors(resp)
@@ -185,7 +185,7 @@ proc getColorTemp*(govee: Govee; device: GoveeDevice): int =
 
   return temp
 
-proc setColorTemp*(govee: Govee; device: GoveeDevice; temp: int) = 
+proc setColorTemp*(govee: Govee; device: GoveeDevice; temp: int) =
   ## Set `device`'s color temperature to `temp` in kelvin
 
   var client = newHttpClient()
@@ -206,11 +206,11 @@ proc setColorTemp*(govee: Govee; device: GoveeDevice; temp: int) =
   raiseErrors(resp)
 
 # --- Others ---
-proc isOnline*(govee: Govee; device: GoveeDevice): bool = 
+proc isOnline*(govee: Govee; device: GoveeDevice): bool =
   ## Returns whether or not the device is online or not
-  ## 
+  ##
   ## .. warning:: Sometimes this may return the wrong state. The Govee API docs state:
-  ## 
+  ##
   ##  "'online' is implemented through the cache. Sometimes it may
   ##  return wrong state. We suggest the third-party developers to ensure that
   ##  even if online returns 'false', the users are allowed to send control
@@ -221,7 +221,7 @@ proc isOnline*(govee: Govee; device: GoveeDevice): bool =
   client.setClientHeaders(govee)
 
   let
-    resp = client.get(contructUri(device=device))
+    resp = client.get(contructUri(device = device))
     jresp = parseJson resp.body
 
   raiseErrors(resp)
@@ -229,29 +229,29 @@ proc isOnline*(govee: Govee; device: GoveeDevice): bool =
   return jresp["data"]["properties"][0]["online"].bval
 
 proc getInfo*(govee: Govee; device: GoveeDevice): tuple[
-  online, powerState: bool; 
+  online, powerState: bool;
   brightness: float;
   colorTemp: int;
   color: Color
-] = 
+] =
   ## Get all device information as a tuple.
-  ## 
-  ## .. warning:: brightness, colorTemp, and color may be 0 or a blank color.
+  ##
+  ## .. warning:: brightness, colorTemp, and color may be 0 or a invalid color.
   var client = newHttpClient()
   client.setClientHeaders(govee)
 
-  let
-    resp = client.get(contructUri(device=device))
-    properties = parseJson(resp.body)["data"]["properties"]
+  let resp = client.get(contructUri(device = device))
 
   raiseErrors(resp)
+
+  let properties = parseJson(resp.body)["data"]["properties"]
 
   result.online = properties[0]["online"].getStr == "true"
   result.powerState = properties[1]["powerState"].getStr == "on"
 
-  result.brightness = try: 
+  result.brightness = try:
     properties[2]["brightness"].getInt / 100
-  except KeyError: 
+  except KeyError:
     0.0
 
   result.colorTemp = try:
@@ -264,8 +264,3 @@ proc getInfo*(govee: Govee; device: GoveeDevice): tuple[
     rgb(jcolor["r"].getInt, jcolor["g"].getInt, jcolor["b"].getInt)
   except KeyError:
     parseColor("#000000")
-
-when isMainModule:
-  let me = initGovee("86f2c216-e4f1-4a89-b2ec-678f604efae5")
-  me.setBrightness(me[0], 100.0)
-
