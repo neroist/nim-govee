@@ -5,6 +5,3 @@ This module allows you to use the Govee API with Nim programmatically, instead o
 
 ## Documentation: 
   - https://nonimportant.github.io/nim-govee/
-
-## Contact:
-You can email me at haroldsjohn58@gmail.com
