@@ -2,8 +2,8 @@
 
 ## Govee API wrapper
 ## 
-## :Author: Grace (https://github.com/nonimportant)
-## :Version: 1.0.0
+## :Author: Grace (https://github.com/neroist)
+## :Version: 1.0.3
 ## 
 ## .. Tip:: See the Govee API docs for more info: \
 ## https://govee-public.s3.amazonaws.com/developer-docs/GoveeDeveloperAPIReference.pdf
